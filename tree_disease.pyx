@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import random
+import random 
+import matplotlib.animation as animation
+import time
 
 N = 200
 beta = 0.3
@@ -29,8 +31,9 @@ def Von_Neuman_neigh(grid, x, y):
     return total
 
 # Function to process one iteration.
-def Tree(grid):
+def Tree(frame_num, img, grid):
     tmp = np.zeroes(shape = (N,N))
+    start = time.time()
     for i in range(N):
         for j in range(N):
             neigh = Von_Neuman_neigh(grid, i, j)
@@ -50,3 +53,19 @@ def Tree(grid):
                 tmp[i][j] = grid[i][j] + 0.1
         if end:
             break
+    end = time.time()
+    print(end - start)
+    img.set_data(tmp)
+    grid[:] = tmp[:]
+    return img
+
+def main():
+    fig, ax = plt.subplots()
+    ax.set_yticklabels([])
+    ax.set_xticklabels([])
+    img = ax.imshow(grid, interpolation = 'nearest')
+    ani = animation.FuncAnimation(fig, Tree, fargs = (img, grid, N, ), frames = 10, interval = 50, save_count = 50)
+    plt.show()
+
+if __name__ == '__main__':
+    main()
