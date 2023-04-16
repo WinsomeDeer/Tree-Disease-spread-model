@@ -18,9 +18,6 @@ Dv = [[0,1], [0,-1], [-1,0], [1,0]]
 
 srand(time(NULL))
 
-cdef double random_num():
-    return rand()/(RAND_MAX + 1)
-
 # Initialise random grid.
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -29,7 +26,7 @@ def random_grid(double gamma):
     cdef np.ndarray grid = np.zeros(shape = (N, N), dtype = np.intc)
     for i in range(N):
         for j in range(N):
-            if random_num() < gamma:
+            if rand() < gamma*RAND_MAX:
                 grid[i, j] = 1
     # Initalise infected grid
     grid[100, 100] = 2
@@ -52,7 +49,7 @@ def Tree(int frame_num, img, int[:, ::1] grid, int[:, ::1] infected_grid):
             if grid[i, j] == 2:
                 for dv in Dv:
                     dx, dy = i + dv[0], j + dv[1]
-                    if (dx >= 0 and dy >= 0 and dx < N and dy < N) and (grid[dx, dy] == 1) and (random_num() < beta):
+                    if (dx >= 0 and dy >= 0 and dx < N and dy < N) and (grid[dx, dy] == 1) and (rand() < beta*RAND_MAX):
                         tmp_view[dx, dy] = 2
                         infected_grid[dx, dy] = 1
                 tmp_view[i, j] = grid[i, j]
